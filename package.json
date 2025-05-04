@@ -36,6 +36,7 @@
     "body-parser": "^1.20.2",
     "typescript-eslint": "^8.3.0",
     "vite": "^6.3.3",
+    "xml2js": "^0.5.0",
     "http-proxy-middleware": "^3.0.5",
     "node-unrar-js": "^1.0.0",
     "react-syntax-highlighter": "^15.5.0"

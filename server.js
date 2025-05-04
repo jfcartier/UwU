@@ -8,19 +8,50 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const Unrar = require('node-unrar-js');
+const { parseStringPromise } = require('xml2js');
 const app = express();
 const PORT = 3001;
 const router = express.Router();
 const mangaNewsRoutes = require('./routes/mangaNews');
 const { searchMangaNewsSlug } = require('./utils/mangaNewsUtils');
 
-// Fonction pour scanner un dossier
-const scanFolder = (folderPath) => {
+async function checkComicInfo(filePath) {
+
+console.log(filePath);
+  if (filePath.endsWith('.cbz')) {
+    const data = fs.readFileSync(filePath);
+    const zip = await JSZip.loadAsync(data);
+
+    // Log all files in the archive for debugging
+    const files = Object.keys(zip.files);
+    console.log('Files in archive:', files);
+
+    // Search for ComicInfo.xml at the root level (case-insensitive)
+    return files.some(fileName => fileName.match(/^ComicInfo\.xml$/i));
+  } else if (filePath.endsWith('.cbr')) {
+    const data = fs.readFileSync(filePath);
+    const extractor = Unrar.createExtractorFromData(data);
+    const extracted = extractor.extractAll();
+
+    if (extracted[0].state === 'SUCCESS') {
+      // Log all files in the archive for debugging
+      const fileNames = extracted[1].files.map(file => file.fileHeader.name);
+      console.log('Files in archive:', fileNames);
+
+      // Search for ComicInfo.xml at the root level (case-insensitive)
+      return fileNames.some(fileName => fileName.match(/^ComicInfo\.xml$/i));
+    }
+  }
+  return false;
+}
+
+// Enable the check for ComicInfo.xml
+const scanFolder = async (folderPath) => {
   const items = fs.readdirSync(folderPath);
   const cbzFiles = [];
   const subFolders = [];
 
-  items.forEach((item) => {
+  for (const item of items) {
     const fullPath = path.join(folderPath, item);
     const stats = fs.statSync(fullPath);
 
@@ -29,16 +60,18 @@ const scanFolder = (folderPath) => {
         id: item,
         name: item,
         path: fullPath,
-        files: scanFolder(fullPath), // Appel récursif pour les sous-dossiers
+        files: await scanFolder(fullPath),
       });
     } else if (stats.isFile() && (item.endsWith('.cbz') || item.endsWith('.cbr'))) {
+      const hasComicInfo = await checkComicInfo(fullPath); // Enable checkComicInfo
       cbzFiles.push({
         id: item,
         name: item,
         path: fullPath,
+        hasComicInfo, // Set the actual value
       });
     }
-  });
+  }
 
   return { cbzFiles, subFolders };
 };
@@ -85,23 +118,25 @@ app.use(
   })
 );
 
-// Endpoint pour lister les fichiers
-app.get('/files', (req, res) => {
+// Update the /files endpoint to use the async scanFolder
+app.get('/files', async (req, res) => {
   const folderPath = process.env.FILES_PATH || './files';
   console.log(`Requête reçue sur /files. Chemin du dossier : ${folderPath}`);
 
   try {
-    const { cbzFiles, subFolders } = scanFolder(folderPath);
+    const { cbzFiles, subFolders } = await scanFolder(folderPath);
+
+    //console.log('Résultat du scanFolder :', { cbzFiles, subFolders }); // Log the result of scanFolder
 
     const result = subFolders.map((folder) => ({
       id: folder.id,
       name: folder.name,
       path: folder.path,
-      files: folder.files.cbzFiles, // Fichiers `.cbz` dans ce dossier
-      cbzCount: folder.files.cbzFiles.length, // Nombre de fichiers `.cbz`
+      files: folder.files.cbzFiles,
+      cbzCount: folder.files.cbzFiles.length,
     }));
 
-    console.log('Résultat du scan :', result);
+    console.log('Résultat final envoyé au client :', result); // Log the final result sent to the client
     res.json(result);
   } catch (err) {
     console.error('Erreur lors du scan des dossiers :', err);

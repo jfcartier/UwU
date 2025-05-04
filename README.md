@@ -1,6 +1,8 @@
 # UwU
 
-J'avais commencé le projet en anglais et j'ai changé d'avis. On va y aller juste en français pour faire chier de le plus monde possible.
+L'idée initiale du projet m'est venu lorsque j'ai installé pour la première fois Komga sur mon Raspberri Pi. Mes fichiers n'étaient pas classés comme je le voulais, alors j'ai essayé pleins d'affaires comme komf, manga tagger, calibre, etc. Rien ne fesait exactement ce que je voulais.
+
+En vérité, je cherchais une équivalence de mediaElch, mais pour les mangas.
 
 ## Installation
 
@@ -23,3 +25,7 @@ En ligne de commande, allez dans le dossier du projet et exécutez la commande :
 Dans votre navigateur : `http://localhost:5173`
 
 Vous devriez voir vos mangas et commencer la gestion de votre librairie
+
+---
+
+J'avais commencé le projet en anglais et j'ai changé d'avis.

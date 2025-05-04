@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import SearchPanel from '../search/SearchPanel';
@@ -12,6 +12,13 @@ import FolderDetailPanel from '../files/FolderDetailPanel';
 const AppLayout: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
   const { error, clearError, selectedManga } = useMangaTagger();
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  const playAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.play();
+    }
+  };
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${
@@ -22,7 +29,7 @@ const AppLayout: React.FC = () => {
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-2">
               <svg
-                className="h-4"
+                className="h-4 cursor-pointer"
                 xmlns="http://www.w3.org/2000/svg"
                 xmlSpace="preserve"
                 style={{
@@ -33,6 +40,7 @@ const AppLayout: React.FC = () => {
                   strokeMiterlimit: 1.5,
                 }}
                 viewBox="0 0 916 508"
+                onClick={playAudio} // Add click handler
               >
                 <path
                   d="M0 0h916v508H0z"
@@ -61,9 +69,9 @@ const AppLayout: React.FC = () => {
           </div>
         </div>
       </header>
-
+      <audio ref={audioRef} src="/src/audio/uwu.mp3" /> {/* Add audio element */}
       {/* Main content avec hauteur maximale */}
-      <main className="container mx-auto px-4 py-6 h-[calc(100vh-72px)]"> {/* Ajusté la hauteur du main */}
+      <main className="container mx-auto h-[calc(100vh-100px)]"> {/* Ajusté la hauteur du main */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full"> {/* Changed h-[calc(100vh-180px)] to h-full */}
           {/* Panneau de gauche - FilePanel */}
           <div className="lg:col-span-3 overflow-auto h-full"> {/* Ajouté h-full */}
