@@ -43,9 +43,6 @@ const FolderDetailPanel: React.FC = () => {
             </div>
             <div>
               <p className="font-medium">{file.name}</p>
-              <p className="text-sm text-gray-500">
-                {file.hasComicInfo ? '✅ ComicInfo.xml présent' : '❌ ComicInfo.xml absent'}
-              </p>
             </div>
           </div>
         ))}
