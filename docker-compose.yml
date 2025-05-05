@@ -1,18 +1,30 @@
 services:
   vite-app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    command: npm run dev
     ports:
       - "5173:5173"
+    volumes:
+      - .:/app
+      # Avoid mounting node_modules from the host
+      - /app/node_modules
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    command: python backend.py
+    ports:
       - "3001:3001"
     volumes:
-      - ${FILES_PATH}:/app/files
       - .:/app
-      - /app/node_modules
+      - ${FILES_PATH}:/app/files
     environment:
-      - NODE_ENV=development
       - FILES_PATH=/app/files
-      - CHOKIDAR_USEPOLLING=true
-    command: sh -c "npm run server & npm run dev"
     networks:
       - app-network
 
