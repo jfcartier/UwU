@@ -3,13 +3,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.frontend
-    command: npm run dev
+    command: npx vite --host
     ports:
       - "5173:5173"
-    volumes:
-      - .:/app
-      # Avoid mounting node_modules from the host
-      - /app/node_modules
+    #volumes:
+    #  - .:/app
+    environment:
+      - VITE_NODE_ENV=development
     networks:
       - app-network
 

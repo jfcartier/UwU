@@ -1,5 +1,5 @@
-# Use an official Node.js image
-FROM node:18-alpine
+# Use the stable Node.js version 22.15.0
+FROM node:22.15.0-alpine
 
 # Set the working directory
 WORKDIR /app
@@ -7,8 +7,14 @@ WORKDIR /app
 # Copy package.json and package-lock.json (if available)
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install all dependencies including devDependencies
+RUN npm install --include=dev
+
+# Install TypeScript and Vite globally to ensure they're available
+# RUN npm install -g typescript vite@^6.3.5
+
+# Make sure the node_modules/.bin directory is in PATH
+ENV PATH /app/node_modules/.bin:$PATH
 
 # Copy the rest of the application code
 COPY . .
@@ -16,5 +22,5 @@ COPY . .
 # Expose the Vite port
 EXPOSE 5173
 
-# Command to run the Vite development server
-CMD ["npm", "run", "dev"]
+# Start Vite with host flag
+CMD ["npm", "run", "dev:vite"]
