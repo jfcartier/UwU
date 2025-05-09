@@ -12,16 +12,34 @@ Créer un fichier `.env` à la racine du projet avec le contenu suivant :
 
 ```
 FILES_PATH=/c/Users/tonuser/chemin/vers/mangas
-VITE_FILES_PATH=/app/files
 VITE_BACKEND_URL=http://localhost:3001
-VITE_MANGADEX_CLIENT_ID=personal-client-asdf...
-VITE_MANGADEX_CLIENT_SECRET=votresupersecretici
-VITE_MANGADEX_USERNAME=tonusername
-VITE_MANGADEX_PASSWORD=tonmotdepasse
 ```
 
-En ligne de commande, allez dans le dossier du projet et exécutez les commandes : `docker-compose build` puis `docker-compose up`.
+En ligne de commande, allez dans le dossier du projet et exécutez la commande : `docker-compose up --build`.
 
 Dans votre navigateur : `http://localhost:5173`
 
 Vous devriez voir vos mangas et commencer la gestion de votre librairie
+
+---
+
+Todo : 
+
+Réglages
+
+	Répertoires 
+
+	CTA : Ajouter, Enlever
+	Pour chaque répertoire, il faut un fichier nfo pour stocker les informations configurés. Par exemple, quand on traite les dossiers, on doit voir dans l'interface si le dossier a été traité ou non (comicInfo.xml)
+
+	Pattern de renommage
+	- Dossier
+	- Manga
+
+Scraper / API
+
+	- Mangadex : Client ID, Client Secret
+	- Scraper par langue : 
+		- liste des champs recueillis (comicinfo) et le ou les API/site utilisés pour chacun en fonction de la langue
+
+Note : Ajouter une notion de sauvegarde pour se souvenir des répertoires.

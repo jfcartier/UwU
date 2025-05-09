@@ -43,7 +43,7 @@ const MangaDetailPanel: React.FC = () => {
 
   useEffect(() => {
     if (selectedManga) {
-      window.history.pushState({ mangaId: selectedManga.id }, '', `/manga/${selectedManga.id}`);
+      // Removed URL update logic
     }
     
     const handlePopState = () => {

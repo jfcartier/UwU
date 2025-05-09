@@ -119,7 +119,7 @@ const FilePanel: React.FC = () => {
               const isClickable = cbzCount > 0 || cbrCount > 0;
 
               return (
-                <div key={folder.id}> {/* Add key here */}
+                <div key={folder.id}>
                   <div
                     title={folder.name}
                     onClick={isClickable ? () => handleFolderClick(folder.id) : undefined}
@@ -167,14 +167,6 @@ const FilePanel: React.FC = () => {
 
                       <div className="flex-1 min-w-0">
                         <p className="font-medium truncate">{folder.name}</p>
-                        <div className="flex items-center text-xs text-gray-500 mt-1">
-                          <span>
-                            {cbzCount > 0 && `${cbzCount} fichiers .cbz`}
-                            {cbzCount > 0 && cbrCount > 0 && ', '}
-                            {cbrCount > 0 && `${cbrCount} fichiers .cbr`}
-                            {cbzCount === 0 && cbrCount === 0 && 'Aucun fichier .cbz ou .cbr trouvé'}
-                          </span>
-                        </div>
                       </div>
                     </div>
 

@@ -3,11 +3,16 @@ import { useMangaTagger } from '../../context/MangaTaggerContext';
 import { useTheme } from '../../context/ThemeContext';
 import MangaCard from '../manga/MangaCard';
 import MangaListItem from '../manga/MangaListItem';
+import MangaDetailPanel from '../manga/MangaDetailPanel';
 
 const ResultsPanel: React.FC = () => {
-  const { searchResults, loadingSearch, searchTerm, hideSearchResults } = useMangaTagger();
+  const { searchResults, loadingSearch, searchTerm, hideSearchResults, selectedManga } = useMangaTagger();
   const { theme } = useTheme();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list'); // Default to list view
+
+  if (selectedManga) {
+    return <MangaDetailPanel />;
+  }
 
   if (loadingSearch) {
     return (
