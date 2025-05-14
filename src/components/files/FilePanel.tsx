@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Folder, Tag, CheckCircle } from 'lucide-react';
+import { Folder, CheckCircle } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useMangaTagger } from '../../context/MangaTaggerContext';
 import { MangaFolder } from '../../types';
-import { renameFile, renameFolder } from '../../services/fileService';
 
 let isFetching = false;
 
@@ -63,20 +62,7 @@ const FilePanel: React.FC = () => {
     }
   };
 
-  const handleRename = async (file: CBZFile, folderPath: string) => {
-    const oldPath = `${folderPath}/${file.name}`;
-    const newName = prompt('Enter new name:', file.name);
-    if (!newName) return;
-
-    const newPath = `${folderPath}/${newName}`;
-    try {
-      await renameFile(oldPath, newPath);
-      alert('File renamed successfully!');
-    } catch (error) {
-      console.error('Error renaming file:', error);
-      alert('Failed to rename file.');
-    }
-  };
+  // Removed unused `handleRename` function
 
   // Charger les fichiers au montage du composant
   useEffect(() => {
@@ -85,9 +71,7 @@ const FilePanel: React.FC = () => {
 
   return (
     <div
-      className={`p-4 rounded-lg ${
-        theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-      } shadow-m fade-in h-full flex flex-col`}
+      className={`p-4 fade-in h-full flex flex-col`}
     >
       <h2 className="text-lg font-semibold mb-4">Dossiers</h2>
 
@@ -111,8 +95,8 @@ const FilePanel: React.FC = () => {
           <div
             className={`divide-y ${
               theme === 'dark' ? 'divide-gray-700' : 'divide-gray-200'
-            } flex-1 overflow-y-auto pr-2`}
-          >
+            } flex-1 overflow-y-auto pr-2 scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar scrollbar-thumb-purple-900 scrollbar-track-black/20 scrollbar-thin`}
+          >            
             {mangaFolders.map((folder) => {
               const cbzCount = folder.files.filter((file) => file.name?.endsWith('.cbz')).length;
               const cbrCount = folder.files.filter((file) => file.name?.endsWith('.cbr')).length;
@@ -137,7 +121,7 @@ const FilePanel: React.FC = () => {
                             : 'border border-gray-300'
                         }`}
                       >
-                        {folderProgress[folder.id] !== undefined && folderProgress[folder.id] < 100 ? (
+                        {folderProgress?.[folder.id] !== undefined && folderProgress[folder.id] < 100 ? (
                           <svg
                             className="animate-spin h-4 w-4 text-white"
                             xmlns="http://www.w3.org/2000/svg"
@@ -158,7 +142,7 @@ const FilePanel: React.FC = () => {
                               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                             ></path>
                           </svg>
-                        ) : processedFolders[folder.id] ? (
+                        ) : processedFolders.includes(folder.id) ? (
                           <CheckCircle size={14} className="text-green-500" />
                         ) : selectedFolder === folder.id ? (
                           <CheckCircle size={14} />

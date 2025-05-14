@@ -23,7 +23,11 @@ Vous devriez voir vos mangas et commencer la gestion de votre librairie
 
 ---
 
+https://atsumeru.xyz/
+
 Todo : 
+
+Formats a supporter :  CBZ, CBR, CB7, PDF, ePub (with limitations), FB2 (with limitations) and Djvu file formats.
 
 Réglages
 
@@ -39,6 +43,7 @@ Réglages
 Scraper / API
 
 	- Mangadex : Client ID, Client Secret
+	- Ajouter https://www.nautiljon.com/ API ou scraper (https://github.com/iambluedev1/nautiljon-api) (https://github.com/barthofu/nautiljon-scraper)
 	- Scraper par langue : 
 		- liste des champs recueillis (comicinfo) et le ou les API/site utilisés pour chacun en fonction de la langue
 

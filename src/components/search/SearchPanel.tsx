@@ -14,6 +14,7 @@ const SearchPanel: React.FC = () => {
     setHideSearchResults,
     selectedLanguage,
     setSelectedLanguage,
+    selectedFolder,
   } = useMangaTagger();
   const { theme } = useTheme();
 
@@ -41,7 +42,7 @@ const SearchPanel: React.FC = () => {
 
   // Add event listener for ESC key
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const handleKeyDown = (e: globalThis.KeyboardEvent) => {
       if (e.key === 'Escape') {
         setShowApiInfo(false);
       }
@@ -53,9 +54,16 @@ const SearchPanel: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (selectedFolder) {
+      const folderName = selectedFolder.split('/').pop()?.split('\\').pop() || selectedFolder; // Extraire le nom du dossier en gérant les séparateurs
+      setSearchTerm(folderName); // Mettre à jour le champ de recherche avec le nom du dossier
+    }
+  }, [selectedFolder, setSearchTerm]);
+
   return (
-    <div className="flex items-start space-x-4">
-      <div className="relative flex-1">
+    <div className="">
+      <div className="">
         {/* Label stylisé pour le champ de recherche */}
         <label 
           htmlFor="search-input" 

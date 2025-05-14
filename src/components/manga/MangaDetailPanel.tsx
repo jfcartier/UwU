@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowLeft, Tag, RefreshCcw } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react'; // Supprimer 'Tag' inutilisé
 import { useMangaTagger } from '../../context/MangaTaggerContext';
 import { useTheme } from '../../context/ThemeContext';
-import { getMangaNewsSynopsis } from '../../services/mangaNewsApi';
 import MetadataPreviewModal from '../metadata/MetadataPreviewModal';
 
 const MangaDetailPanel: React.FC = () => {
@@ -11,35 +10,11 @@ const MangaDetailPanel: React.FC = () => {
     loadingDetail, 
     clearSelectedManga, 
     applyMetadataToFolder, 
-    selectedFolder,
-    editableSynopsis,
-    setEditableSynopsis,
-    selectedLanguage,
-    setSelectedLanguage,
-    editableTitle,
-    setEditableTitle,
-    setHideSearchResults,
+    selectedLanguage, // Added selectedLanguage here
   } = useMangaTagger();
   const { theme } = useTheme();
 
-  const [isLoadingMangaNews, setIsLoadingMangaNews] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
-
-  const fetchMangaNewsSynopsis = async () => {
-    if (!editableTitle) return;
-    
-    setIsLoadingMangaNews(true);
-    try {
-      const synopsis = await getMangaNewsSynopsis(editableTitle);
-      if (synopsis) {
-        setEditableSynopsis(synopsis);
-      }
-    } catch (error) {
-      console.error('Échec de la récupération du synopsis Manga-News :', error);
-    } finally {
-      setIsLoadingMangaNews(false);
-    }
-  };
 
   useEffect(() => {
     if (selectedManga) {
@@ -63,8 +38,30 @@ const MangaDetailPanel: React.FC = () => {
     setShowPreview(false);
     applyMetadataToFolder(); // Appliquer les métadonnées
     clearSelectedManga(); // Réinitialiser la sélection
-    setHideSearchResults(true); // Masquer les résultats de recherche
     window.history.pushState(null, '', '/'); // Revenir à l'URL de recherche
+  };
+
+   const copyInfoToComicInfoFields = () => {
+    const titleInput = document.getElementById('Title') as HTMLInputElement;
+    const summaryInput = document.getElementById('Summary') as HTMLTextAreaElement;
+    const genreInput = document.getElementById('Genre') as HTMLInputElement;
+    const languageISOInput = document.getElementById('LanguageISO') as HTMLInputElement;
+
+    if (titleInput && title) {
+      titleInput.value = title;
+    }
+
+    if (summaryInput && selectedManga?.synopsis) {
+      summaryInput.value = selectedManga.synopsis;
+    }
+
+    if (genreInput && genres.length > 0) {
+      genreInput.value = genres.join(', ');
+    }
+
+    if (languageISOInput) {
+      languageISOInput.value = selectedLanguage;
+    }
   };
 
   if (loadingDetail) {
@@ -84,9 +81,7 @@ const MangaDetailPanel: React.FC = () => {
 
   const {
     title,
-    japaneseTitle,
     imageUrl,
-    synopsis,
     type,
     chapters,
     volumes,
@@ -116,6 +111,10 @@ const MangaDetailPanel: React.FC = () => {
             <span className="text-sm">Retour</span>
           </button>
           
+          <h1 className="text-lg font-semibold text-center flex-1">
+            {title || 'Titre inconnu'}
+          </h1>
+
           <div className="w-[76px]"></div>
         </div>
 
@@ -126,7 +125,7 @@ const MangaDetailPanel: React.FC = () => {
               <img 
                 src={imageUrl} 
                 alt={title} 
-                className="rounded-lg shadow-md w-full object-cover"
+                className="rounded-lg shadow-md w-full "
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = 'https://via.placeholder.com/350x500?text=No+Image';
                 }}
@@ -166,43 +165,12 @@ const MangaDetailPanel: React.FC = () => {
             <div className="md:w-2/3">
               {/* Synopsis */}
               <div className="mb-4">
-                <h3 className="text-sm font-medium text-gray-500">Titre</h3>
-                <input
-                  type="text"
-                  value={editableTitle}
-                  onChange={(e) => setEditableTitle(e.target.value)}
-                  className={`text-lg font-semibold text-center flex-1 w-full px-2 py-1 rounded ${
-                    theme === 'dark' 
-                      ? 'bg-gray-700 text-white focus:bg-gray-600' 
-                      : 'bg-gray-100 text-gray-900 focus:bg-white'
-                  } border border-transparent focus:border-purple-500 focus:outline-none`}
-                />
-
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="text-sm font-medium text-gray-500">Synopsis</h3>
-                  <button
-                    onClick={fetchMangaNewsSynopsis}
-                    disabled={isLoadingMangaNews}
-                    className={`p-2 rounded-lg flex items-center ${
-                      theme === 'dark' ? 'hover:bg-gray-600' : 'hover:bg-gray-200'
-                    } transition-colors`}
-                    title="Récupérer le synopsis depuis Manga-News"
-                  >
-                    <RefreshCcw 
-                      size={16} 
-                      className={`${isLoadingMangaNews ? 'animate-spin' : ''}`}
-                    />
-                  </button>
-                </div>
-                <textarea
-                  value={editableSynopsis}
-                  onChange={(e) => setEditableSynopsis(e.target.value)}
-                  className={`w-full h-40 p-2 text-sm rounded-lg border ${
-                    theme === 'dark' 
-                      ? 'bg-gray-700 border-gray-600 text-gray-300' 
-                      : 'bg-white border-gray-300 text-gray-700'
-                  } focus:outline-none focus:ring-2 focus:ring-purple-500/50`}
-                />
+                <h3 className="text-sm font-medium text-gray-500">Synopsis</h3>
+                <p className={`w-full p-2 text-sm rounded-lg border ${
+                  theme === 'dark' 
+                    ? 'bg-gray-700 border-gray-600 text-gray-300' 
+                    : 'bg-white border-gray-300 text-gray-700'
+                }`}>{selectedManga.synopsis || 'Aucun synopsis disponible'}</p>
               </div>
 
               {/* Genres */}
@@ -291,35 +259,11 @@ const MangaDetailPanel: React.FC = () => {
 
               {/* Boutons pour appliquer les métadonnées */}
               <div className="mt-6 space-y-4">
-                {/* Sélecteur de langue */}
-                <div className="flex items-center gap-4">
-                  <label className="text-sm font-medium text-gray-500">Langue du manga : </label>
-                  <select
-                    value={selectedLanguage}
-                    onChange={(e) => setSelectedLanguage(e.target.value as 'fr' | 'en' | 'ja')}
-                    className={`px-3 py-2 rounded-lg ${
-                      theme === 'dark' 
-                        ? 'bg-gray-700 border-gray-600' 
-                        : 'bg-white border-gray-300'
-                    } border focus:outline-none focus:ring-2 focus:ring-purple-500/50`}
-                  >
-                    <option value="fr">Français</option>
-                    <option value="en">Anglais</option>
-                    <option value="ja">Japonais</option>
-                  </select>
-                </div>
-
-                {/* Bouton pour prévisualiser */}
                 <button
-                  onClick={() => setShowPreview(true)}
-                  disabled={!selectedFolder} // Désactiver si aucun dossier n'est sélectionné
-                  className={`w-full px-4 py-3 rounded-lg ${
-                    !selectedFolder
-                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed' // Style désactivé
-                      : 'bg-blue-500 text-white hover:bg-blue-600' // Style actif
-                  }`}
+                  onClick={copyInfoToComicInfoFields}
+                  className="px-4 py-2 bg-blue-500 text-white rounded"
                 >
-                  Prévisualiser les modifications
+                  Appliquer
                 </button>
 
                 {showPreview && (
@@ -328,29 +272,6 @@ const MangaDetailPanel: React.FC = () => {
                     onApply={handleApplyMetadata}
                   />
                 )}
-
-                {/* Bouton pour appliquer 
-                <button
-                  onClick={handleApplyMetadata}
-                  disabled={!selectedFolder}
-                  className={`w-full px-4 py-3 rounded-lg ${
-                    theme === 'dark' 
-                      ? 'bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700' 
-                      : 'bg-purple-500 hover:bg-purple-600 disabled:bg-gray-200'
-                  } text-white font-medium flex items-center justify-center transition-colors ${
-                    !selectedFolder ? 'opacity-70 cursor-not-allowed' : ''
-                  }`}
-                >
-                  <Tag size={18} className="mr-2" />
-                  Appliquer les métadonnées
-                </button>
-*/}
-
-                <p className="text-xs text-gray-500">
-                  {!selectedFolder 
-                    ? "Sélectionnez d'abord un dossier"
-                    : ''}
-                </p>
               </div>
             </div>
           </div>

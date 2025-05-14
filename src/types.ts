@@ -31,6 +31,7 @@ export interface MangaDetail {
   themes: string[]; // Ajout des thèmes
   demographics: string[]; // Ajout des démographies
   authors: string[];
+  language?: string; // Ajout de la propriété language pour indiquer la langue du manga
 }
 
 // Types for CBZ files and folders
