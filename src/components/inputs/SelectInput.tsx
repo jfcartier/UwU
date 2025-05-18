@@ -10,26 +10,24 @@ interface SelectInputProps {
 
 const SelectInput: React.FC<SelectInputProps> = ({ label, name, value, options, onChange }) => {
   return (
-    <div className="relative">
-      <select
+    <div className="relative">      <select
         id={name}
         name={name}
         value={value}
         onChange={onChange}
-        className="peer w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+        className="peer w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-800 dark:text-white dark:border-gray-600"
       >
         <option value="" disabled hidden>
           {label}
         </option>
         {options.map((option) => (
-          <option key={option.value} value={option.value}>
+          <option key={option.value} value={option.value} className="dark:bg-gray-800 dark:text-white">
             {option.label}
           </option>
         ))}
-      </select>
-      <label
+      </select>      <label
         htmlFor={name}
-        className="absolute left-3 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-purple-500"
+        className="absolute left-3 top-2 text-gray-500 dark:text-gray-300 text-sm transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-purple-500 dark:peer-focus:text-purple-300"
       >
         {label}
       </label>

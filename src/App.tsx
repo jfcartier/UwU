@@ -1,5 +1,6 @@
 import { ThemeProvider } from './context/ThemeContext';
 import { MangaTaggerProvider, useMangaTagger } from './context/MangaTaggerContext';
+import { ComicInfoProvider } from './context/ComicInfoContext';
 import AppLayout from './components/layout/AppLayout';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import SettingsPage from './components/layout/SettingsPage';
@@ -14,14 +15,16 @@ function App() {
   return (
     <MangaTaggerProvider>
       <ThemeProvider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<AppLayout />}>
-              <Route index element={<Home />} />
-              <Route path="settings" element={<SettingsPage />} />
-            </Route>
-          </Routes>
-        </Router>
+        <ComicInfoProvider>
+          <Router>
+            <Routes>
+              <Route path="/" element={<AppLayout />}>
+                <Route index element={<Home />} />
+                <Route path="settings" element={<SettingsPage />} />
+              </Route>
+            </Routes>
+          </Router>
+        </ComicInfoProvider>
       </ThemeProvider>
     </MangaTaggerProvider>
   );

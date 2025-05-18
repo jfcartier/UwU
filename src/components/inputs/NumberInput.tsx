@@ -3,7 +3,7 @@ import React from 'react';
 interface NumberInputProps {
   label: string;
   name: string;
-  value: number;
+  value: number | string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 

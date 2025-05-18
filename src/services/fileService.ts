@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { MangaFolder } from '../types';
 
 export const renameFile = async (oldPath: string, newName: string) => {
   console.log(`Renommage demandé : ${oldPath} -> ${newName}`);
@@ -69,5 +69,30 @@ export const fetchFolders = async (): Promise<MangaFolder[]> => {
   } catch (err) {
     console.error('Error fetching folders:', err);
     throw err;
+  }
+};
+
+export const extractMetadata = async (filePath: string): Promise<any> => {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/extract-metadata`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ filePath }),
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null; // Pas de métadonnées trouvées
+      }
+      throw new Error(`Failed to extract metadata: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.metadata;
+  } catch (err) {
+    console.error('Error extracting metadata:', err);
+    return null;
   }
 };
