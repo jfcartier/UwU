@@ -71,7 +71,7 @@ const FilePanel: React.FC = () => {
 
   return (
     <div
-      className={`p-4 fade-in h-full flex flex-col`}
+      className={`fade-in h-full flex flex-col`}
     >
       <h2 className="text-lg font-semibold mb-4">Dossiers</h2>
 

@@ -16,7 +16,7 @@ const NumberInput: React.FC<NumberInputProps> = ({ label, name, value, onChange 
         name={name}
         value={value}
         onChange={onChange}
-        className="peer w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+        className="peer border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
         placeholder=" "
       />
       <label

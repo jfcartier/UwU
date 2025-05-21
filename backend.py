@@ -427,5 +427,62 @@ def get_manga_news_synopsis_route(title):
         return jsonify({'error': 'Server error processing Manga-News request', 'details': str(e)}), 500
 # --- Manga-News Route --- END ---
 
+@app.route('/extract-metadata', methods=['POST'])
+def extract_metadata():
+    data = request.json
+    file_path = data.get('filePath')
+    
+    if not file_path:
+        return jsonify({'error': 'Le chemin du fichier est requis.'}), 400
+        
+    try:
+        xml_content = None
+        print(f"Tentative d'extraction des métadonnées de: {file_path}")
+        
+        # Extraction pour fichier CBZ (ZIP)
+        if file_path.endswith('.cbz'):
+            try:
+                with zipfile.ZipFile(file_path, 'r') as zip_file:
+                    file_list = zip_file.namelist()
+                    print(f"Contenu du CBZ: {file_list}")
+                    if 'ComicInfo.xml' in file_list:
+                        xml_content = zip_file.read('ComicInfo.xml').decode('utf-8')
+                        print("ComicInfo.xml trouvé et extrait du CBZ")
+            except Exception as zip_error:
+                print(f"Erreur lors de l'extraction du fichier ZIP: {zip_error}")
+                    
+        # Extraction pour fichier CBR (RAR)
+        elif file_path.endswith('.cbr'):
+            try:
+                with rarfile.RarFile(file_path) as rar_file:
+                    file_list = rar_file.namelist()
+                    print(f"Contenu du CBR: {file_list}")
+                    if 'ComicInfo.xml' in file_list:
+                        xml_content = rar_file.read('ComicInfo.xml').decode('utf-8')
+                        print("ComicInfo.xml trouvé et extrait du CBR")
+            except Exception as rar_error:
+                print(f"Erreur lors de l'extraction du fichier RAR: {rar_error}")
+                    
+        if xml_content:
+            # Parser le XML en dictionnaire pour le retourner comme JSON
+            import xml.etree.ElementTree as ET
+            root = ET.fromstring(xml_content)
+            metadata = {}
+            
+            # Extraire tous les éléments du XML
+            for child in root:
+                if child.text and child.text.strip():
+                    metadata[child.tag] = child.text.strip()
+            
+            print(f"Métadonnées extraites avec succès: {metadata}")
+            return jsonify({'metadata': metadata})
+        else:
+            print("Aucune métadonnée ComicInfo.xml trouvée.")
+            return jsonify({'message': 'Aucune métadonnée ComicInfo.xml trouvée.'}), 404
+            
+    except Exception as e:
+        print(f"Erreur lors de l'extraction des métadonnées: {e}")
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3001, debug=True)

@@ -3,7 +3,11 @@ import { Search } from 'lucide-react';
 import { useMangaTagger } from '../../context/MangaTaggerContext';
 import { useTheme } from '../../context/ThemeContext';
 
-const SearchPanel: React.FC = () => {
+interface SearchPanelProps {
+  onSearchComplete?: () => void; // Callback pour fermer l'overlay après une recherche réussie
+}
+
+const SearchPanel: React.FC<SearchPanelProps> = ({ onSearchComplete }) => {
   const { 
     searchTerm, 
     setSearchTerm, 
@@ -34,10 +38,14 @@ const SearchPanel: React.FC = () => {
       handleSearchWithReset();
     }
   };
-
   const handleSearchWithReset = async () => {
     setHideSearchResults(false); // Réafficher les résultats de recherche
-    await handleSearch(); // Effectuer la recherche
+    const success = await handleSearch(); // Effectuer la recherche
+    
+    // Si la recherche est réussie et qu'un callback est fourni, l'appeler
+    if (success && onSearchComplete) {
+      onSearchComplete();
+    }
   };
 
   // Add event listener for ESC key

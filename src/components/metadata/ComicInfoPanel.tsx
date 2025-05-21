@@ -1,91 +1,111 @@
 import React from 'react';
-import TextInput from '../inputs/TextInput';
-import TextArea from '../inputs/TextArea';
-import NumberInput from '../inputs/NumberInput';
-import SelectInput from '../inputs/SelectInput';
-import TagInput from '../inputs/TagInput';
+import InlineTextInput from '../inputs/InlineTextInput';
+import InlineTextArea from '../inputs/InlineTextArea';
+import InlineNumberInput from '../inputs/InlineNumberInput';
+import InlineSelectInput from '../inputs/InlineSelectInput';
+import InlineTagInput from '../inputs/InlineTagInput';
 import { useComicInfo } from '../../context/ComicInfoContext';
 
 const ComicInfoPanel: React.FC = () => {
-  const { formData, genres, writers, publishers, handleChange, setGenres, setWriters, setPublishers } = useComicInfo();
-
-  return (
-    <div className="p-4 fade-in h-full flex flex-col">
-      <h2 className="text-lg font-semibold mb-4">Métadonnées</h2>
-      <div className="flex-1 overflow-hidden flex flex-col">        <form className="divide-y divide-gray-700 flex-1 overflow-y-auto pr-2 scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar scrollbar-thumb-purple-900 scrollbar-track-black/20 scrollbar-thin">          <div className="grid grid-cols-3 gap-4">
-            <TextInput
+  const { formData, genres, writers, publishers, handleChange, setGenres, setWriters, setPublishers } = useComicInfo();  return (    
+    <fieldset className="fade-in h-full max-h-full grid grid-rows-[auto_1fr]">
+      <legend className="text-lg font-semibold mb-4">Métadonnées</legend>      
+      <div className="h-full overflow-auto">          
+        <form className={[
+          "flex",
+          "flex-col",
+          "gap-2",
+          "h-full",
+          "scrollbar-thumb-rounded-full",
+          "scrollbar-track-rounded-full",
+          "scrollbar",
+          "scrollbar-thumb-purple-900",
+          "scrollbar-track-black/20",
+          "scrollbar-thin"        ].join(" ")}>
+           
+            <InlineTextInput
+              label="Titre"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+            />
+            
+            <InlineTextInput
               label="Série"
               name="series"
               value={formData.series}
               onChange={handleChange}
             />
-            <TextInput
+
+            <InlineTextInput
               label="Série alternative"
               name="alternate_series"
               value={formData.alternate_series}
               onChange={handleChange}
             />
-            <NumberInput
+
+            <InlineNumberInput
               label="Nombre de volumes"
               name="count"
               value={formData.count}
               onChange={handleChange}
             />
-          </div><TextArea
-            label="Résumé"
-            name="summary"
-            value={formData.summary}
-            onChange={handleChange}
-          />
-          <div className="grid grid-cols-3 gap-4">
-            <NumberInput
+       
+            <InlineTextArea
+              label="Résumé"
+              name="summary"
+              value={formData.summary}
+              onChange={handleChange}
+            />
+     
+          
+         
+            <InlineNumberInput
               label="Année"
               name="year"
               value={formData.year}
               onChange={handleChange}
             />
-            <NumberInput
-              label="Mois"
-              name="month"
-              value={formData.month}
-              onChange={handleChange}
-            />
-            <NumberInput
-              label="Jour"
-              name="day"
-              value={formData.day}
-              onChange={handleChange}
-            /></div>
-          <div className="grid grid-cols-2 gap-4">
-            <TagInput
+
+       
+
+          
+        
+            <InlineTagInput
               label="Auteur(s)"
               name="writers"
               placeholder='Ex : Eiichiro Oda, Masashi Kishimoto'
               value={writers}
               onChange={setWriters}
             />
-            <TagInput
+            <InlineTagInput
               label="Éditeur(s)"
               name="publishers"
               placeholder='Ex : Glénat'
               value={publishers}
               onChange={setPublishers}
             />
-          </div>
-          <TagInput
-            label="Genres"
-            name="genres"
-            placeholder='Ex : Action, Aventure, Comédie'
-            value={genres}
-            onChange={setGenres}
-          />          <TextInput
-            label="Site web"
-            name="web"
-            value={formData.web}
-            onChange={handleChange}
-          />          
-          <div className="grid grid-cols-4 gap-2">
-            <SelectInput
+        
+
+    
+            <InlineTagInput
+              label="Genres"
+              name="genres"
+              placeholder='Ex : Action, Aventure, Comédie'
+              value={genres}
+              onChange={setGenres}
+            />
+      
+          
+    
+            <InlineTextInput
+              label="Site web"
+              name="web"
+              value={formData.web}
+              onChange={handleChange}
+            />
+               
+            <InlineSelectInput
               label="Code langue ISO"
               name="language_iso"
               value={formData.language_iso}
@@ -96,7 +116,7 @@ const ComicInfoPanel: React.FC = () => {
               ]}
               onChange={handleChange}
             />
-            <SelectInput
+            <InlineSelectInput
               label="Format"
               name="format"
               value={formData.format}
@@ -111,10 +131,9 @@ const ComicInfoPanel: React.FC = () => {
                 { value: 'Graphic Novel', label: 'Graphic Novel' },
                 { value: 'One-shot', label: 'One-shot' },
                 { value: 'Doujinshi', label: 'Doujinshi' },
-              ]}
-              onChange={handleChange}
+              ]}              onChange={handleChange}
             />
-            <SelectInput
+            <InlineSelectInput
               label="Noir et blanc"
               name="black_white"
               value={formData.black_white}
@@ -125,7 +144,7 @@ const ComicInfoPanel: React.FC = () => {
               ]}
               onChange={handleChange}
             />
-            <SelectInput
+            <InlineSelectInput
               label="Classification d'âge"
               name="age_rating"
               value={formData.age_rating}
@@ -139,28 +158,32 @@ const ComicInfoPanel: React.FC = () => {
                 { value: 'Teen', label: 'Adolescents' },
                 { value: 'Mature 17+', label: '17+' },
                 { value: 'M', label: 'M' },
-                { value: 'R18+', label: 'R18+' },
-                { value: 'Adults Only 18+', label: '18+' },
-              ]}
-              onChange={handleChange}            />          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <TextArea
-              label="Critique"
-              name="review"
-              value={formData.review}
-              onChange={handleChange}
-            />
-            <TextArea
-              label="Notes"
-              name="notes"
-              value={formData.notes}
-              onChange={handleChange}
-            />
-          </div>
+                { value: 'R18+', label: 'R18+' },                { value: 'Adults Only 18+', label: '18+' },
+              ]}              onChange={handleChange}            />
+               
+
+   
+            
+
         </form>
       </div>
-    </div>
+    </fieldset>
   );
 };
 
 export default ComicInfoPanel;
+
+/*
+     <InlineNumberInput
+              label="Mois"
+              name="month"
+              value={formData.month}
+              onChange={handleChange}
+            />
+            <InlineNumberInput
+              label="Jour"
+              name="day"
+              value={formData.day}
+              onChange={handleChange}
+            />
+*/

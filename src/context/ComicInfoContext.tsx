@@ -1,6 +1,7 @@
 import React, { createContext, ReactNode, useState } from 'react';
 
 interface ComicFormData {
+  title: string;
   series: string;
   count: string;
   alternate_series: string;
@@ -33,6 +34,7 @@ interface ComicInfoContextType {
 }
 
 export const defaultFormData: ComicFormData = {
+  title: '',
   series: '',
   count: '',
   alternate_series: '',

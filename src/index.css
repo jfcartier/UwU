@@ -3,6 +3,11 @@
 @layer base {
   html {
     font-size: 12px; /* toutes les unités rem vont suivre */
+    font-family: 'Parkinsans', sans-serif;
+  }
+
+  body {
+    font-family: 'Parkinsans', sans-serif;
   }
 }
 

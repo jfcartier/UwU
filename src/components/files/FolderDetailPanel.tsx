@@ -4,7 +4,8 @@ import { useTheme } from '../../context/ThemeContext';
 import { extractMetadata } from '../../services/fileService';
 import { useComicInfo, defaultFormData } from '../../context/ComicInfoContext';
 
-const FolderDetailPanel: React.FC = () => {  const { selectedFolder, mangaFolders } = useMangaTagger();
+const FolderDetailPanel: React.FC = () => {
+  const { selectedFolder, mangaFolders } = useMangaTagger();
   const { theme } = useTheme();
   const { setFormData, setGenres, setWriters, setPublishers } = useComicInfo();
   const [extractionStatus, setExtractionStatus] = useState<{ success: boolean; message: string } | null>(null);
@@ -14,11 +15,16 @@ const FolderDetailPanel: React.FC = () => {  const { selectedFolder, mangaFolder
   const loadMetadata = async (file: any) => {
     try {
       setExtractionStatus(null);
+      console.log(`Tentative d'extraction des métadonnées pour le fichier : ${file.path}`);
       
       const metadata = await extractMetadata(file.path);
+      console.log("Métadonnées extraites :", metadata);
+      
       if (metadata) {
+        console.log("Remplissage du formulaire avec les métadonnées");
         // Remplir les données du formulaire avec les métadonnées extraites
         setFormData({
+          title: folder?.name || '',
           series: metadata.Series || '',
           count: metadata.Volume || '',
           alternate_series: metadata.AlternateSeries || '',
@@ -49,19 +55,24 @@ const FolderDetailPanel: React.FC = () => {  const { selectedFolder, mangaFolder
           setGenres(metadata.Genre.split(',').map((genre: string) => genre.trim()));
         }
         
-        setExtractionStatus({ success: true, message: 'Métadonnées extraites avec succès' });
+        //setExtractionStatus({ success: true, message: 'Métadonnées extraites avec succès' });
       } else {
         console.log('Aucune métadonnée trouvée dans le fichier');
-        setExtractionStatus({ success: false, message: 'Aucune métadonnée trouvée dans ce fichier' });
+        //setExtractionStatus({ success: false, message: 'Aucune métadonnée trouvée dans ce fichier' });
       }
     } catch (error) {
       console.error('Erreur lors du chargement des métadonnées:', error);
-      setExtractionStatus({ success: false, message: 'Erreur lors de l\'extraction des métadonnées' });
+      //setExtractionStatus({ success: false, message: 'Erreur lors de l\'extraction des métadonnées' });
     }
-  };  // Charger automatiquement les métadonnées du premier fichier CBZ/CBR quand un dossier est sélectionné
+  };
+  // Charger automatiquement les métadonnées du premier fichier CBZ/CBR quand un dossier est sélectionné
   useEffect(() => {
     // Réinitialiser les métadonnées à chaque changement de dossier
-    setFormData(defaultFormData);
+    setFormData({
+      ...defaultFormData,
+      // Toujours définir le titre avec le nom du dossier sélectionné
+      title: folder?.name || ''
+    });
     setGenres([]);
     setWriters([]);
     setPublishers([]);
@@ -79,7 +90,7 @@ const FolderDetailPanel: React.FC = () => {  const { selectedFolder, mangaFolder
         setExtractionStatus({ success: false, message: 'Aucun fichier CBZ/CBR trouvé dans ce dossier' });
       }
     }
-  }, [selectedFolder]); // Déclencher uniquement quand le dossier sélectionné change
+  }, [selectedFolder, folder?.name]); // Déclencher quand le dossier sélectionné ou son nom change
 
   if (!folder) {
     return (
@@ -91,10 +102,8 @@ const FolderDetailPanel: React.FC = () => {  const { selectedFolder, mangaFolder
         <p className="text-sm text-gray-500">Aucun dossier sélectionné</p>
       </div>
     );
-  }
-
-  return (
-    <div className="p-4 fade-in h-full flex flex-col">
+  }  return (
+    <div className="p-4 fade-in h-full max-h-full grid grid-rows-[auto_auto_1fr] bg-white dark:bg-gray-800 rounded-lg shadow-sm">
       <h2 className="text-lg font-semibold mb-4">Détails du dossier</h2>
       
       {/* Afficher le message d'état de l'extraction si disponible */}
@@ -107,15 +116,15 @@ const FolderDetailPanel: React.FC = () => {  const { selectedFolder, mangaFolder
           {extractionStatus.message}
         </div>
       )}
-      
-      <div className="flex-1 overflow-hidden flex flex-col">
-        <div className="divide-y divide-gray-700 flex-1 overflow-y-auto pr-2 scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar scrollbar-thumb-purple-900 scrollbar-track-black/20 scrollbar-thin">        {folder.files.map((file, index: number) => (
+        <div className="h-full overflow-auto">
+        <div className="grid grid-cols-1 gap-1 pr-2 min-h-full scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar scrollbar-thumb-purple-900 scrollbar-track-black/20 scrollbar-thin">
+        {folder.files.map((file, index: number) => (
           <div 
             key={file.id} 
-            className="flex items-start py-2"
+            className="flex items-start gap-2"
           >
             <div
-              className={`mt-4 mr-2 font-bold text-sm ${
+              className={`mt-2 font-bold text-sm ${
                 file.name.split('.').pop()?.toLowerCase() === 'cbz'
                   ? 'text-lime-400'
                   : file.name.split('.').pop()?.toLowerCase() === 'cbr'
@@ -124,12 +133,13 @@ const FolderDetailPanel: React.FC = () => {  const { selectedFolder, mangaFolder
               }`}
             >
               {file.name.split('.').pop()?.toUpperCase() || 'UNKNOWN'}
-            </div>            <div className="flex-grow">
+            </div>
+            <div className="flex-grow">
               <input
                 type="text"
                 name={`file-${index}`}
                 defaultValue={file.name}
-                className="pb-1 pt-3 font-medium bg-transparent border-b border-gray-400 focus:outline-none focus:border-purple-500 w-full"
+                className="dark:bg-gray-800 py-1 px-2 bg-transparent border-b border-gray-400 focus:outline-none focus:border-purple-500 w-full"
               />
             </div>
           </div>
